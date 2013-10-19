@@ -59,17 +59,28 @@ app.get('/send_sms', function(req, res){
   })
 });
 
+
 app.post("/send_sms", function(req, res){
   var mobile = req.param('mobile');
   connection.query("select * from users where mobile = ?", [mobile] ,function(err, result){
     if (result && result.length > 0){
       res.send({ code: 0, error: 'cant submit twice' });
     }else{
+      var code = Math.round(900000*Math.random()+100000);
       var sql = "insert into users set ?"
-      var data = { mobile: mobile, created_at: new Date() };
+      var data = { mobile: mobile, sms_code: code, created_at: new Date() };
       connection.query(sql,data,function(err, result){
         if (!err){
-          res.send({ code: 1 });
+          var content = "验证码: " + code;
+          var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
+          request(uri, function(error, response, body){
+            if (!error && response.statusCode == 200) {
+              
+              res.send({ code: 1 });
+            }else{
+              res.send({ code: 0, error: 'send sms ERROR' });
+            }
+          });
         }
       });
     }

@@ -9,7 +9,7 @@ exports.up = function(db, callback) {
     mobile: 'string',
     sms_code: 'string',
     ip: 'string',
-    status: { type: 'int', defaultValue: 0 }, // 0-notvalid, 1-valid
+    status: { type: 'int', defaultValue: 0 }, // 0-user has verified, 1-user has verified
     created_at: 'datetime',
     updated_at: 'datetime'
   },callback)

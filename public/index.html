@@ -23,14 +23,14 @@ $(function(){
       return;
     }
     $.ajax({
-      url: "/mobiles",
+      url: "/send_sms",
       type: "POST",
       data: { mobile: mobile },
       success: function(ret){
         if (ret.code)
           alert('send sms code to your mobile, notice check it');
         else
-          alert("ERROR");
+          alert(ret.error);
       }
     });
   });
