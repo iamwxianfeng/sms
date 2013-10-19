@@ -6,13 +6,13 @@ exports.up = function(db, callback) {
     id: { type: 'int', primarykey: true, autoIncrement: true },
     email: 'string',
     name: 'string',
-    mobile: 'string',
+    mobile: { type: 'string', unique: true, notNull: true },
     sms_code: 'string',
-    ip: 'string',
+    ip: { type: 'string', unique: true, notNull: true },
     status: { type: 'int', defaultValue: 0 }, // 0-user has verified, 1-user has verified
     created_at: 'datetime',
     updated_at: 'datetime'
-  },callback)
+  },callback);
 };
 
 exports.down = function(db, callback) {
