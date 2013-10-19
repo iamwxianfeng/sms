@@ -47,11 +47,12 @@ if ('development' == app.get('env')) {
 }
 
 // app.get('/', routes.index);
-app.get('/users', user.list);
+// app.get('/users', user.list);
 
+// send sms to user mobile
 app.post("/send_sms", function(req, res){
   var mobile = req.param('mobile');
-  connection.query("select * from users where mobile = ?", [mobile] ,function(err, result){
+  connection.query("SELECT * FROM users WHERE mobile = ?", [mobile], function(err, result){
     if (result && result.length > 0){
       res.send({ code: 0, error: 'cant submit twice' });
     }else{
@@ -62,7 +63,7 @@ app.post("/send_sms", function(req, res){
         if (!err){
           var content = urlencode("验证码: " + code, "gb2312");
           var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
-          console.log(uri);
+          // console.log(uri);
           request(uri, function(error, response, body){
             if (!error && response.statusCode == 200 && body > 0) {
               connection.query("UPDATE users set sms_status = 1 WHERE mobile = " + connection.escape(mobile));
@@ -73,6 +74,21 @@ app.post("/send_sms", function(req, res){
           });
         }
       });
+    }
+  });
+});
+
+// verify sms code to match mobile number
+app.post("/verify",function(req, res){
+  var mobile = req.param('mobile');
+  var code = req.param('code');
+  connection.query("SELECT * FROM users WHERE mobile = ? AND sms_code = ?",[mobile,code], function(err, result){
+    console.log(result);
+    if (result && result.length == 1){
+      connection.query("UPDATE users SET status = 1 WHERE mobile = " + connection.escape(mobile));
+      res.send({ code: 1 })
+    }else{
+      res.send({ code: 0, error: 'verify Fail, pls check your code is correct?' });
     }
   });
 });

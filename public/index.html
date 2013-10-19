@@ -6,9 +6,16 @@
   <meta name="description" content="sms">
 </head>
 <body>
-  mobile number: 
-  <input name="mobile" id="mobile"></input>
-  <button id="submit">submit</button>
+  <p>
+    mobile number: 
+    <input name="mobile" id="mobile"></input>
+    <button id="submit">submit</button>
+  </p>
+  <p>
+    code:
+    <input name="code" id="code"></input>
+    <button id="verify">verify</button>
+  </p>
 </body>
 </html>
 
@@ -34,5 +41,27 @@ $(function(){
       }
     });
   });
+
+  $("#verify").click(function(){
+    var code = $("#code").val();
+    if (code == ""){
+      alert("pls input code from your sms");
+      return;
+    }
+    $.ajax({
+      url: "/verify",
+      type: "POST",
+      data: { code: code },
+      success: function(ret){
+        if (ret.code)
+          alert("verify success");
+        else
+          alert(ret.error);
+      }
+    });
+  });
 });
 </script>
+
+
+
