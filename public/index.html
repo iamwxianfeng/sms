@@ -44,6 +44,7 @@ $(function(){
 
   $("#verify").click(function(){
     var code = $("#code").val();
+    var mobile = $("#mobile").val();
     if (code == ""){
       alert("pls input code from your sms");
       return;
@@ -51,7 +52,7 @@ $(function(){
     $.ajax({
       url: "/verify",
       type: "POST",
-      data: { code: code },
+      data: { code: code, mobile: mobile },
       success: function(ret){
         if (ret.code)
           alert("verify success");

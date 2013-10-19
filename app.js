@@ -55,47 +55,51 @@ app.post("/send_sms", function(req, res){
   connection.query("SELECT * FROM users WHERE mobile = ?", [mobile], function(err, result){
     if (result && result.length > 0){
       res.send({ code: 0, error: 'this mobile have exist' });
-      return;
-    }
-  });
-  var ip = req.ip;
-  connection.query("SELECT * FROM users WHERE ip = ?", [ip], function(err, result){
-    if (result && result.length > 0){
-      res.send({ code: 0, error: 'this ip have exist' });
-    }
-  });
+    }else{
 
-  var code = Math.round(900000*Math.random()+100000);
-  var sql = "insert into users set ?";
-  var data = { mobile: mobile, sms_code: code, ip: req.ip, created_at: new Date() };
-  connection.query(sql,data,function(err, result){
-    if (!err){
-      var content = urlencode("验证码: " + code, "gb2312");
-      var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
-          // console.log(uri);
-          request(uri, function(error, response, body){
-            if (!error && response.statusCode == 200 && body > 0) {
-              connection.query("UPDATE users set sms_status = 1 WHERE mobile = " + connection.escape(mobile));
-              res.send({ code: 1 });
-            }else{
-              res.send({ code: 0, error: 'send sms ERROR' });
+      var ip = req.ip;
+      connection.query("SELECT * FROM users WHERE ip = ?", [ip], function(err, result){
+        if (result && result.length > 0){
+          res.send({ code: 0, error: 'this ip have exist' });
+        }else{
+
+          var code = Math.round(900000*Math.random()+100000);
+          var sql = "insert into users set ?";
+          var data = { mobile: mobile, sms_code: code, ip: req.ip, created_at: new Date() };
+          connection.query(sql,data,function(err, result){
+            if (!err){
+              var content = urlencode("验证码: " + code, "gb2312");
+              var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
+              // console.log(uri);
+              request(uri, function(error, response, body){
+                if (!error && response.statusCode == 200 && body > 0) {
+                  connection.query("UPDATE users set sms_status = 1 WHERE mobile = " + connection.escape(mobile));
+                  res.send({ code: 1 });
+                }else{
+                  res.send({ code: 0, error: 'send sms ERROR' });
+                }
+              });
             }
           });
+
         }
       });
+}
+});
+
 });
 
 // verify sms code to match mobile number
 app.post("/verify",function(req, res){
   var mobile = req.param('mobile');
   var code = req.param('code');
-  connection.query("SELECT * FROM users WHERE mobile = ? AND sms_code = ?",[mobile,code], function(err, result){
-    console.log(result);
+  var sql = "SELECT * FROM users WHERE mobile = "+ connection.escape(mobile) +" AND sms_code = " + connection.escape(code);
+  connection.query(sql, function(err, result){
     if (result && result.length == 1){
       connection.query("UPDATE users SET status = 1 WHERE mobile = " + connection.escape(mobile));
       res.send({ code: 1 })
     }else{
-      res.send({ code: 0, error: 'verify Fail, pls check your code is correct?' });
+      res.send({ code: 0, error: 'verify Fail,your code is correct?' });
     }
   });
 });
