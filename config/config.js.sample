@@ -1,7 +1,7 @@
 var config = {
 
-  smsServer: "http://admin.esoftsms.com/sdk/BatchSend2.aspx?CorpID=*&Pwd=*&Mobile=*&Content=*&Cell=*&SendTime=*",
-  corpID: 'test01033',
+  smsServer: "http://sms.server.com",
+  corpID: 'test033',
   pwd: '123456'
 
 };
