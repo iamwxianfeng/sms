@@ -4,31 +4,36 @@ sms
 send sms to user mobile
 
 developed by Node.js + Mysql
+
 node modules: Express + mysql + db-migrate + request + urlencode
  
-init
-====
+## init Step By Step
 
-DB
-=====
+#### DB
+
   config db:
-  >vi App.root/database.json
+  
+    vi App.root/database.json
 
   create db:
-  >mysql -uroot -p -e "create database sms_development"
+  
+    mysql -uroot -p -e "create database sms_development"
 
   create tables:
-  >db-migrate up
+  
+    db-migrate up
 
-SMS Server
-=====
+#### SMS Server
+
   config sms server account:
-  >cp App.root/config/config.js.sample App.root/config/config.js
-  >vi App.root/config/config.js
+  
+    cp App.root/config/config.js.sample App.root/config/config.js
+    vi App.root/config/config.js
 
-Start Node
-=====
-  >node app
+#### Start Node
+
+    node app
+  
   visit http://localhost:3000
 
 That's All, JUST DO IT!!!
