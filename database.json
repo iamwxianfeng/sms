@@ -1,0 +1,19 @@
+{
+	"development": {
+		"driver": "mysql",
+		"user": "root",
+		"password": "root",
+		"host": "localhost",
+		"database": "sms_development"
+	},
+
+	"test":{},
+
+	"production": {
+		"driver": "mysql",
+		"user": "root",
+		"password": "root",
+		"host": "localhost",
+		"database": "sms_production"
+	}
+}

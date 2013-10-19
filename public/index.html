@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>SMS</title>
+  <meta name="description" content="sms">
+</head>
+<body>
+  mobile number: 
+  <input name="mobile" id="mobile"></input>
+  <button id="submit">submit</button>
+</body>
+</html>
+
+<script type="application/javascript" src="/javascripts/jquery.js"></script>
+
+<script>
+$(function(){
+  $("#submit").click(function(){
+    var mobile = $("#mobile").val();
+    if (mobile == ""){
+      alert("pls input your mobile number!");
+      return;
+    }
+    $.ajax({
+      url: "/mobiles",
+      type: "POST",
+      data: { mobile: mobile },
+      success: function(ret){
+        if (ret.code)
+          alert('send sms code to your mobile, notice check it');
+        else
+          alert("ERROR");
+      }
+    });
+  });
+});
+</script>
