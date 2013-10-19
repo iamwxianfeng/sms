@@ -49,22 +49,6 @@ if ('development' == app.get('env')) {
 // app.get('/', routes.index);
 app.get('/users', user.list);
 
-app.get('/send_sms', function(req, res){
- var content = urlencode('你好', 'gb2312');
- console.log(content);
- var uri = 'http://admin.esoftsms.com/sdk/BatchSend2.aspx?CorpID=test01033&Pwd=123456&Mobile=15001108691&Content='+ content +'&Cell=&SendTime=';
- console.log(uri);
- request(uri, function (error, response, body) {
-    // console.log(response);
-    console.log(body < 0); // -3
-    // console.log(error);
-    if (!error && response.statusCode == 200) {
-      res.send({ code: 1 });
-    }
-  })
-});
-
-
 app.post("/send_sms", function(req, res){
   var mobile = req.param('mobile');
   connection.query("select * from users where mobile = ?", [mobile] ,function(err, result){

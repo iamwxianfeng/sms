@@ -1,7 +1,7 @@
 var config = {
 
   smsServer: "http://sms.server.com",
-  corpID: 'test033',
+  corpId: 'test033',
   pwd: '123456'
 
 };
