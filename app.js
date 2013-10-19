@@ -93,13 +93,18 @@ app.post("/send_sms", function(req, res){
 app.post("/verify",function(req, res){
   var mobile = req.param('mobile');
   var code = req.param('code');
-  var sql = "SELECT * FROM users WHERE mobile = "+ connection.escape(mobile) +" AND sms_code = " + connection.escape(code);
+  var sql = "SELECT * FROM users WHERE status = 0 AND mobile = "+ connection.escape(mobile) +" AND sms_code = " + connection.escape(code);
   connection.query(sql, function(err, result){
     if (result && result.length == 1){
       connection.query("UPDATE users SET status = 1 WHERE mobile = " + connection.escape(mobile));
       res.send({ code: 1 })
     }else{
-      res.send({ code: 0, error: 'verify Fail,your code is correct?' });
+      connection.query("SELECT * FROM users WHERE mobile = ? AND status = 1", [mobile], function(err, result){
+        if (result && result.length == 1)
+          res.send({ code: 0, error: 'you have verified' });
+        else
+          res.send({ code: 0, error: 'verify Fail,your code is correct?' });    
+      });
     }
   });
 });

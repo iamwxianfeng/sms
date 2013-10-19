@@ -4,7 +4,7 @@ sms
 send sms to user mobile
 
 developed by Node.js + Mysql
-node modules: Express + mysql + db-migrate + request + iconv-lite
+node modules: Express + mysql + db-migrate + request + urlencode
  
 init
 ====
