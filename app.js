@@ -11,6 +11,7 @@
 
  var request = require('request');
  var mysql = require('mysql');
+ var urlencode = require('urlencode');
  var fs = require('fs');
  var config = require('./config/config');
 
@@ -49,10 +50,14 @@ if ('development' == app.get('env')) {
 app.get('/users', user.list);
 
 app.get('/send_sms', function(req, res){
-  request('http://admin.esoftsms.com/sdk/BatchSend.aspx?CorpID=test01033&Pwd=123456&Mobile=15001108691&Content=中文&Cell=&SendTime=', function (error, response, body) {
-    console.log(response);
-    console.log(body);
-    console.log(error);
+ var content = urlencode('你好', 'gb2312');
+ console.log(content);
+ var uri = 'http://admin.esoftsms.com/sdk/BatchSend2.aspx?CorpID=test01033&Pwd=123456&Mobile=15001108691&Content='+ content +'&Cell=&SendTime=';
+ console.log(uri);
+ request(uri, function (error, response, body) {
+    // console.log(response);
+    console.log(body < 0); // -3
+    // console.log(error);
     if (!error && response.statusCode == 200) {
       res.send({ code: 1 });
     }
@@ -71,11 +76,12 @@ app.post("/send_sms", function(req, res){
       var data = { mobile: mobile, sms_code: code, created_at: new Date() };
       connection.query(sql,data,function(err, result){
         if (!err){
-          var content = "验证码: " + code;
+          var content = urlencode("验证码: " + code, "gb2312");
           var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
+          console.log(uri);
           request(uri, function(error, response, body){
-            if (!error && response.statusCode == 200) {
-              
+            if (!error && response.statusCode == 200 && body > 0) {
+              connection.query("UPDATE users set sms_status = 1 WHERE mobile = " + connection.escape(mobile));
               res.send({ code: 1 });
             }else{
               res.send({ code: 0, error: 'send sms ERROR' });
