@@ -46,7 +46,9 @@ node modules: Express + mysql + db-migrate + request + urlencode + sinalogin + u
       weiboEmail:
       weiboPassword:
 
-  config weibo feed id which you want valid, the feed id you can get by chrome develop tool
+  config weibo feedId(which you want validate, the feed id you can get by chrome develop tool)
+    
+    vi App.root/config/config.js
     feedId:
 
 #### Start Node
