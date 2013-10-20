@@ -12,7 +12,10 @@
  var request = require('request');
  var mysql = require('mysql');
  var urlencode = require('urlencode');
+ var sina = require('sinalogin');
+ var _ = require("underscore");
  var fs = require('fs');
+ var Cookie = require('cookie-jar');
  var config = require('./config/config');
 
  var app = express();
@@ -46,20 +49,65 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// app.get('/', routes.index);
-// app.get('/users', user.list);
-
-// var login = function(){
-//   var email = config.weiboEmail;
-//   var 
-// }
-
 // check weibo
-// app.post("/check_weibo", function(req, res){
-//   var weibo = req.param('weibo');
+app.post("/check_weibo", function(req, res){
+  var weibo = req.param('weibo');
 
-// });
+  var data = fs.readFileSync("./cookie.txt", 'utf-8');
+  var cookies = data.split('\n');
 
+  var j = request.jar();
+
+  cookies.forEach(function(cookie){
+    j.add(new Cookie(cookie));
+  });
+
+  var userUri = 'http://api.weibo.com/2/users/domain_show.json?domain='+ weibo +'&source=211160679'
+  request({ url: userUri, jar: j }, function(err, response, body){
+    if (!err){
+      var ret = JSON.parse(body);
+      if (ret.error){
+        res.send({ code: 0, error: "Error!,make sure your weibo domain id is correct"});
+      }else{
+        var uid = ret.idstr;
+        var createdAt = ret.created_at; // weibo signup date
+        if ( createdAt < "2013-09-01" ){
+          res.send({ code: 0, error: 'weibo signup date must > 2013-09-01' });
+          return;
+        }
+        var followersCount = ret.followers_count; // weibo followers count
+        if (followersCount <= 5){
+          res.send({ code: 0, error: 'weibo followers count must > 50' });
+          return;
+        }
+        var feedUri = "http://api.weibo.com/2/statuses/user_timeline.json?count=10&source=211160679&uid=" + uid;
+        request({ url: feedUri, jar: j }, function(err, response, body){
+          if (!err){
+            // console.log(body);
+            var ret = JSON.parse(body);
+            var statuses = ret.statuses;
+            var rt_feeds = [];
+            for ( var i = 0; i < statuses.length; i++ ){
+              if (statuses[i].retweeted_status){
+                rt_feeds.push(statuses[i]);
+              }
+            }
+            var rt_ids = [];
+            for (var i = 0; i < rt_feeds.length; i++){
+              rt_ids.push(rt_feeds[i].retweeted_status.id);
+            }
+            var id = config.feedId;
+            if (_.indexOf(rt_ids,id) == -1){
+              res.send({ code: 0, error: 'your are not repost our feed' });
+              return;
+            }
+            res.send({ code: 1 });
+          }
+        });
+      }
+    }
+  });
+});
 
 // send sms to user mobile
 app.post("/send_sms", function(req, res){

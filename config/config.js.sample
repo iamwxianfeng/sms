@@ -1,11 +1,14 @@
 var config = {
 
-  smsServer: "http://sms.server.com",
-  corpId: 'test033',
-  pwd: '123456',
+  smsServer: "http://sms.server.com", // sms server
+  corpId: 'test033', // sms server account
+  pwd: '123456', // sms server pwd
 
-  weiboEmail: "aa@xx.com",
-  weiboPassword: "123456"
+  weiboEmail: "aa@xx.com", // weibo account
+  weiboPassword: "123456", // weibo account pwd
+
+  // this feed: http://weibo.com/2183570524/AeLdYdyT0
+  feedId: 3635181263232370 // integer
 
 };
 

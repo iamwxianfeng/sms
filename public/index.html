@@ -16,9 +16,9 @@ span {
 
   <h1>Auth User</h1>
 
-  <h2>First: auth weibo</h2>
+  <h2>First: auth weibo(1: signup  date < 2013-09-01, 2: followers count > 50, 3: repost our feed)</h2>
   <p>
-    weibo ID: 
+    weibo Domain ID:
     <input id="weiboId"></input>
     <button id="check">check</button>
     <span id="weiboResult"></span>
@@ -45,7 +45,7 @@ span {
 <script>
 $(function(){
 
-  var $weiboResult = $("#mobileResult");
+  var $weiboResult = $("#weiboResult");
 
   $("#check").click(function(){
     var weiboId = $("#weiboId").val();
