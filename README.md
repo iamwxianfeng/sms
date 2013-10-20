@@ -1,11 +1,11 @@
 sms
 ===
 
-send sms to user mobile
+check user weibo info and send sms to user mobile for auth user.
 
 developed by Node.js + Mysql
 
-node modules: Express + mysql + db-migrate + request + urlencode
+node modules: Express + mysql + db-migrate + request + urlencode + sinalogin + underscore
  
 ## init Step By Step
 
@@ -34,6 +34,18 @@ node modules: Express + mysql + db-migrate + request + urlencode
   
     cp App.root/config/config.js.sample App.root/config/config.js
     vi App.root/config/config.js
+      smsServer:
+      corpId:
+      pwd:
+
+#### weibo account
+  config weibo account for get cookie
+  vi App.root/config/config.js
+    weiboEmail:
+    weiboPassword:
+
+  config weibo feed id which you want valid, the feed id you can get by chrome develop tool
+    feedId:
 
 #### Start Node
 
