@@ -23,6 +23,11 @@ node modules: Express + mysql + db-migrate + request + urlencode
   
     db-migrate up
 
+  if db-migrate cant find, you can do as this:
+
+    cd App.root/node_modules/db-migrate
+    npm link (maybe need sudo)
+
 #### SMS Server
 
   config sms server account:

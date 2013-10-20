@@ -44,6 +44,29 @@ span {
 
 <script>
 $(function(){
+
+  var $weiboResult = $("#mobileResult");
+
+  $("#check").click(function(){
+    var weiboId = $("#weiboId").val();
+    if (weiboId == ""){
+      $weiboResult.text("pls input your weibo id");
+      return;
+    }
+    $.ajax({
+      url: "/check_weibo",
+      type: "POST",
+      data: { weibo: weiboId },
+      success: function(ret){
+        if (ret.code)
+          $weiboResult.text("check Success");
+        else
+          $weiboResult.text(ret.error);
+      }
+    });
+  });
+
+
   var $mobileResult = $("#mobileResult");
 
   $("#submit").click(function(){

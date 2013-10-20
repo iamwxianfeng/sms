@@ -49,6 +49,18 @@ if ('development' == app.get('env')) {
 // app.get('/', routes.index);
 // app.get('/users', user.list);
 
+// var login = function(){
+//   var email = config.weiboEmail;
+//   var 
+// }
+
+// check weibo
+// app.post("/check_weibo", function(req, res){
+//   var weibo = req.param('weibo');
+
+// });
+
+
 // send sms to user mobile
 app.post("/send_sms", function(req, res){
   var mobile = req.param('mobile');
@@ -57,7 +69,8 @@ app.post("/send_sms", function(req, res){
       res.send({ code: 0, error: 'this mobile have exist' });
     }else{
 
-      var ip = req.ip;
+      // var ip = req.ip;
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       connection.query("SELECT * FROM users WHERE ip = ?", [ip], function(err, result){
         if (result && result.length > 0){
           res.send({ code: 0, error: 'this ip have exist' });
@@ -65,7 +78,7 @@ app.post("/send_sms", function(req, res){
 
           var code = Math.round(900000*Math.random()+100000);
           var sql = "insert into users set ?";
-          var data = { mobile: mobile, sms_code: code, ip: req.ip, created_at: new Date() };
+          var data = { mobile: mobile, sms_code: code, ip: ip, created_at: new Date() };
           connection.query(sql,data,function(err, result){
             if (!err){
               var content = urlencode("验证码: " + code, "gb2312");
