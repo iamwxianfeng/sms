@@ -70,12 +70,12 @@ app.post("/check_weibo", function(req, res){
         res.send({ code: 0, error: "Error!,make sure your weibo domain id is correct"});
       }else{
         var uid = ret.idstr;
-        var createdAt = ret.created_at; // weibo signup date
+        var createdAt = ret.created_at; // user signup date
         if ( createdAt < "2013-09-01" ){
           res.send({ code: 0, error: 'weibo signup date must > 2013-09-01' });
           return;
         }
-        var followersCount = ret.followers_count; // weibo followers count
+        var followersCount = ret.followers_count; // user followers count
         if (followersCount <= 5){
           res.send({ code: 0, error: 'weibo followers count must > 50' });
           return;
@@ -92,7 +92,7 @@ app.post("/check_weibo", function(req, res){
                 rt_feeds.push(statuses[i]);
               }
             }
-            var rt_ids = [];
+            var rt_ids = []; // user repost feed ids
             for (var i = 0; i < rt_feeds.length; i++){
               rt_ids.push(rt_feeds[i].retweeted_status.id);
             }
