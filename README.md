@@ -1,7 +1,7 @@
 sms
 ===
 
-check user weibo info and send sms to user mobile for auth user.
+check user weibo info(signup date, followers count, validate repost a feed) and send sms to user mobile for auth user.
 
 developed by Node.js + Mysql
 
@@ -39,7 +39,9 @@ node modules: Express + mysql + db-migrate + request + urlencode + sinalogin + u
       pwd:
 
 #### weibo account
+
   config weibo account for get cookie
+
   vi App.root/config/config.js
     weiboEmail:
     weiboPassword:
