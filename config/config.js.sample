@@ -2,7 +2,10 @@ var config = {
 
   smsServer: "http://sms.server.com",
   corpId: 'test033',
-  pwd: '123456'
+  pwd: '123456',
+
+  weiboEmail: "aa@xx.com",
+  weiboPassword: "123456"
 
 };
 

@@ -5,16 +5,37 @@
   <title>SMS</title>
   <meta name="description" content="sms">
 </head>
+
+<style>
+span {
+  color: #cc2400;
+}
+</style>
+
 <body>
+
+  <h1>Auth User</h1>
+
+  <h2>First: auth weibo</h2>
+  <p>
+    weibo ID: 
+    <input id="weiboId"></input>
+    <button id="check">check</button>
+    <span id="weiboResult"></span>
+  </p>
+
+  <h2>Second: auth mobile sms code</h2>
   <p>
     mobile number: 
     <input name="mobile" id="mobile"></input>
-    <button id="submit">submit</button>
+    <button id="submit">get sms</button>
+    <span id="mobileResult"></span>
   </p>
   <p>
     code:
     <input name="code" id="code"></input>
     <button id="verify">verify</button>
+    <span id="codeResult"></span>
   </p>
 </body>
 </html>
@@ -23,10 +44,12 @@
 
 <script>
 $(function(){
+  var $mobileResult = $("#mobileResult");
+
   $("#submit").click(function(){
     var mobile = $("#mobile").val();
     if (mobile == ""){
-      alert("pls input your mobile number!");
+      $mobileResult.text("pls input your mobile number!");
       return;
     }
     $.ajax({
@@ -35,18 +58,20 @@ $(function(){
       data: { mobile: mobile },
       success: function(ret){
         if (ret.code)
-          alert('have send sms code to your mobile, pls check it');
+          $mobileResult.text('have send sms code to your mobile, pls check it');
         else
-          alert(ret.error);
+          $mobileResult.text(ret.error);
       }
     });
   });
+
+  var $codeResult = $("#codeResult");
 
   $("#verify").click(function(){
     var code = $("#code").val();
     var mobile = $("#mobile").val();
     if (code == ""){
-      alert("pls input code from your sms");
+      $codeResult.text("pls input code from your sms");
       return;
     }
     $.ajax({
@@ -55,9 +80,9 @@ $(function(){
       data: { code: code, mobile: mobile },
       success: function(ret){
         if (ret.code)
-          alert("verify success");
+          $codeResult.text("verify success");
         else
-          alert(ret.error);
+          $codeResult.text(ret.error);
       }
     });
   });
