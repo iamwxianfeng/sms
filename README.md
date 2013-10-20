@@ -42,9 +42,9 @@ node modules: Express + mysql + db-migrate + request + urlencode + sinalogin + u
 
   config weibo account for get cookie
 
-  vi App.root/config/config.js
-    weiboEmail:
-    weiboPassword:
+    vi App.root/config/config.js
+      weiboEmail:
+      weiboPassword:
 
   config weibo feed id which you want valid, the feed id you can get by chrome develop tool
     feedId:
