@@ -105,7 +105,7 @@ app.post("/check_weibo", function(req, res){
           return;
         }
         var followersCount = ret.followers_count; // user followers count
-        if (followersCount <= 5){
+        if (followersCount <= 50){
           res.send({ code: 0, error: 'weibo followers count must > 50' });
           return;
         }
