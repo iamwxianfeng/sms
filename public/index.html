@@ -18,7 +18,12 @@ span {
 
   <h2>First: auth weibo(1: signup  date < 2013-09-01, 2: followers count > 50, 3: repost our feed)</h2>
   <p>
-    weibo Domain ID:
+    weibo, weibo Domain ID(http://weibo.com/<span>{domainId}</span>)
+    weibo user id(http://weibo.com/u/<span>{uid}</span>). pls input red part <br/>
+    <select id="style">
+      <option value="domain">domain id</option>
+      <option value="uid">user id</option>
+    </select>
     <input id="weiboId"></input>
     <button id="check">check</button>
     <span id="weiboResult"></span>
@@ -49,6 +54,7 @@ $(function(){
 
   $("#check").click(function(){
     var weiboId = $("#weiboId").val();
+    var style = $("#style").val();
     if (weiboId == ""){
       $weiboResult.text("pls input your weibo id");
       return;
@@ -56,12 +62,14 @@ $(function(){
     $.ajax({
       url: "/check_weibo",
       type: "POST",
-      data: { weibo: weiboId },
+      data: { weibo: weiboId, style: style },
       success: function(ret){
-        if (ret.code)
+        if (ret.code){
           $weiboResult.text("check Success");
-        else
-          $weiboResult.text(ret.error);
+          $("#weiboId").attr("disabled", true);
+          $("#style").attr("disabled", true);
+        }else
+        $weiboResult.text(ret.error);
       }
     });
   });
@@ -71,6 +79,8 @@ $(function(){
 
   $("#submit").click(function(){
     var mobile = $("#mobile").val();
+    var weiboId = $("#weiboId").val();
+    var style = $("#style").val();
     if (mobile == ""){
       $mobileResult.text("pls input your mobile number!");
       return;
@@ -78,7 +88,7 @@ $(function(){
     $.ajax({
       url: "/send_sms",
       type: "POST",
-      data: { mobile: mobile },
+      data: { mobile: mobile, weibo: weiboId, style: style },
       success: function(ret){
         if (ret.code)
           $mobileResult.text('have send sms code to your mobile, pls check it');

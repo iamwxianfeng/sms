@@ -49,9 +49,30 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+var userApi = function(style, weibo){
+  var userUri;
+  if (style == 'domain'){
+    userUri = 'http://api.weibo.com/2/users/domain_show.json?source=5786724301&domain=' + weibo;
+  }else{
+    userUri = "http://api.weibo.com/2/users/show.json?source=211160679&uid=" + weibo;
+  }
+  return userUri;
+}
+
+var address = function(style, weibo){
+  var addr;
+  if (style == 'domain'){
+    addr = "http://weibo.com/" + weibo;
+  }else{
+    addr = "http://weibo.com/u/" + weibo;
+  }
+  return addr;
+}
+
 // check weibo
 app.post("/check_weibo", function(req, res){
   var weibo = req.param('weibo');
+  var style = req.param('style');
 
   var data = fs.readFileSync("./cookie.txt", 'utf-8');
   var cookies = data.split('\n');
@@ -62,14 +83,22 @@ app.post("/check_weibo", function(req, res){
     j.add(new Cookie(cookie));
   });
 
-  var userUri = 'http://api.weibo.com/2/users/domain_show.json?domain='+ weibo +'&source=211160679'
-  request({ url: userUri, jar: j }, function(err, response, body){
-    if (!err){
-      var ret = JSON.parse(body);
-      if (ret.error){
-        res.send({ code: 0, error: "Error!,make sure your weibo domain id is correct"});
-      }else{
-        var uid = ret.idstr;
+  var addr = address(style, weibo);
+  var userUri = userApi(style, weibo);
+
+  connection.query("select * from users where status = 1 AND weibo = " + connection.escape(addr), function(err, result){
+    if (!err && result.length > 0){
+      res.send({ code: 0, error: "this weibo has exist" });
+      return;
+    }else{
+
+      request({ url: userUri, jar: j }, function(err, response, body){
+        if (!err){
+          var ret = JSON.parse(body);
+          if (ret.error){
+            res.send({ code: 0, error: "Error!,make sure your weibo domain id is correct"});
+          }else{
+            var uid = ret.idstr;
         var createdAt = ret.created_at; // user signup date
         if ( createdAt < "2013-09-01" ){
           res.send({ code: 0, error: 'weibo signup date must > 2013-09-01' });
@@ -101,33 +130,47 @@ app.post("/check_weibo", function(req, res){
               res.send({ code: 0, error: 'your are not repost our feed' });
               return;
             }
+            connection.query("select * from users where weibo = " + connection.escape(addr), function(err, result){
+              if (!err && result.length == 0)
+                connection.query("insert into users set ?", { weibo: addr });
+            });
             res.send({ code: 1 });
           }
         });
       }
     }
   });
+
+}
+});
+
 });
 
 // send sms to user mobile
 app.post("/send_sms", function(req, res){
+  var weibo = req.param("weibo");
+  if (weibo == ""){
+    res.send({ code: 0, error: 'must check weibo first' });
+    return;
+  }
+  var style = req.param("style");
   var mobile = req.param('mobile');
+  var addr = address(style, weibo);
   connection.query("SELECT * FROM users WHERE mobile = ?", [mobile], function(err, result){
     if (result && result.length > 0){
       res.send({ code: 0, error: 'this mobile have exist' });
+      return;
     }else{
-
       // var ip = req.ip;
       var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
       connection.query("SELECT * FROM users WHERE ip = ?", [ip], function(err, result){
         if (result && result.length > 0){
           res.send({ code: 0, error: 'this ip have exist' });
+          return;
         }else{
 
           var code = Math.round(900000*Math.random()+100000);
-          var sql = "insert into users set ?";
-          var data = { mobile: mobile, sms_code: code, ip: ip, created_at: new Date() };
-          connection.query(sql,data,function(err, result){
+          connection.query("update users set mobile = ?, sms_code = ?, ip = ?, created_at = ? where weibo = ?",[mobile, code, ip, new Date(), addr],function(err, result){
             if (!err){
               var content = urlencode("验证码: " + code, "gb2312");
               var uri = config.smsServer + "?CorpID="+ config.corpId +"&Pwd="+ config.pwd +"&Mobile="+ mobile +"&Content="+ content +"&Cell=&SendTime=";
