@@ -16,29 +16,21 @@ span {
 
   <h1>Auth User</h1>
 
-  <h2>First: auth weibo(1: signup  date < 2013-09-01, 2: followers count > 50, 3: repost our feed)</h2>
+  <h2>First: auth weibo and get sms</h2>
   <p>
-    weibo, weibo Domain ID(http://weibo.com/<span>{domainId}</span>)
-    weibo user id(http://weibo.com/u/<span>{uid}</span>). pls input red part <br/>
-    <select id="style">
-      <option value="domain">domain id</option>
-      <option value="uid">user id</option>
-    </select>
-    <input id="weiboId"></input>
-    <button id="check">check</button>
-    <span id="weiboResult"></span>
-  </p>
-
-  <h2>Second: auth mobile sms code</h2>
-  <p>
-    mobile number: 
-    <input name="mobile" id="mobile"></input>
+    weibo permalink:
+    <input id="weibo_permalink"></input> <br/>
+    mobile number:
+    <input name="mobile" id="mobile"></input> <br/>
     <button id="submit">get sms</button>
     <span id="mobileResult"></span>
   </p>
+
+  <h2>Second: verify sms code</h2>
   <p>
     code:
     <input name="code" id="code"></input>
+    <br/>
     <button id="verify">verify</button>
     <span id="codeResult"></span>
   </p>
@@ -50,50 +42,25 @@ span {
 <script>
 $(function(){
 
-  var $weiboResult = $("#weiboResult");
-
-  $("#check").click(function(){
-    var weiboId = $("#weiboId").val();
-    var style = $("#style").val();
-    if (weiboId == ""){
-      $weiboResult.text("pls input your weibo id");
-      return;
-    }
-    $.ajax({
-      url: "/check_weibo",
-      type: "POST",
-      data: { weibo: weiboId, style: style },
-      success: function(ret){
-        if (ret.code){
-          $weiboResult.text("check Success");
-          $("#weiboId").attr("disabled", true);
-          $("#style").attr("disabled", true);
-        }else
-        $weiboResult.text(ret.error);
-      }
-    });
-  });
-
-
   var $mobileResult = $("#mobileResult");
 
   $("#submit").click(function(){
     var mobile = $("#mobile").val();
-    var weiboId = $("#weiboId").val();
-    var style = $("#style").val();
+    var weibo_permalink = $("#weibo_permalink").val();
     if (mobile == ""){
       $mobileResult.text("pls input your mobile number!");
       return;
     }
+    if (weibo_permalink == ""){
+      $mobileResult.text("pls input weibo_permalink");
+      return;
+    }
     $.ajax({
-      url: "/send_sms",
+      url: "/submit_sms",
       type: "POST",
-      data: { mobile: mobile, weibo: weiboId, style: style },
+      data: { weibo_permalink: weibo_permalink, sms_number: mobile, signature_request: "" },
       success: function(ret){
-        if (ret.code)
-          $mobileResult.text('have send sms code to your mobile, pls check it');
-        else
-          $mobileResult.text(ret.error);
+        $mobileResult.text(ret.status);
       }
     });
   });
@@ -102,20 +69,16 @@ $(function(){
 
   $("#verify").click(function(){
     var code = $("#code").val();
-    var mobile = $("#mobile").val();
     if (code == ""){
       $codeResult.text("pls input code from your sms");
       return;
     }
     $.ajax({
-      url: "/verify",
+      url: "/verify_sms",
       type: "POST",
-      data: { code: code, mobile: mobile },
+      data: { sms_verification: code },
       success: function(ret){
-        if (ret.code)
-          $codeResult.text("verify success");
-        else
-          $codeResult.text(ret.error);
+        $codeResult.text(ret.status || ret.signature);
       }
     });
   });

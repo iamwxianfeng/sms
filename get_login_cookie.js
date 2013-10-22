@@ -17,3 +17,4 @@ Sinalogin.weibo_login(account, function(err, loginInfo){
     });
   }
 });
+
