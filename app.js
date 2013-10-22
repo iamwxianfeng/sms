@@ -142,7 +142,7 @@ app.post("/submit_sms", function(req, res){
         request({ url: uri, jar: j }, function(err, response, body){
           var ret = JSON.parse(body);
           // console.log(ret);
-          if (ret.error){
+          if (ret.error){ // NOTICE: if here return error, cookie is invalid
             res.send({ status: '_INELIGIBLE' });
             return;
           }

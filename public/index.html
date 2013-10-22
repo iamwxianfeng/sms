@@ -58,7 +58,7 @@ $(function(){
     $.ajax({
       url: "/submit_sms",
       type: "POST",
-      data: { weibo_permalink: weibo_permalink, sms_number: mobile, signature_request: "" },
+      data: { weibo_permalink: weibo_permalink, sms_number: mobile, signature_request: "8332c2396e4927e29d680e90afe653ee6402ff794477bcb41ddd362650eb2c2c23ec84161585508393bd5ddbd87ba67e39f5932868b283e68b7f2bcd7e899a01ac2f89211e949db90b47f3656708e0094c0ca1b0585f1814b3ae3d4e516675e8e941ccf6e887efa0a8c7eaac84e8c555d998bd7cd4cd923a561c69547e3e9b6f9b376077a27ffc1dbbbc8413a7d6975f2dbf393c76d7a0cd0670e64c6cf4bb1f067fe6fea27d0d04721023bdb3ff9648d8340e19ebc74fd85c3fab572f00d49153ac33db0363974b348b0cd4cbaa64d6d605fd3b8838ccabd06f8b917f83c18841c1979b86dcb63fda7bc5b31edb721df5976391ac6cefde19606c9fb4d706be" },
       success: function(ret){
         $mobileResult.text(ret.status);
       }
