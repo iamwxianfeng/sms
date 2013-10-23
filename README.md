@@ -46,11 +46,26 @@ node modules: Express + mysql + db-migrate + request + urlencode + sinalogin + u
       weiboEmail:
       weiboPassword:
 
-  config weibo feedId(which you want validate, the feed id you can get by chrome develop tool)
+  if login cookie is outdated, u can do as this:
     
-    vi App.root/config/config.js
-    feedId:
-
+    cd App.root
+    node request_with_cookie.js
+    if return this: {"error":"auth faild!","error_code":21301,"request":"/2/users/domain_show.json"}
+    this means cookie is outdated!
+    
+    how update a new cookie, do as this:
+    cd App.root
+    node get_login_cookie.js
+    if give '需要验证码'
+    you can find captcha in App.root/pinpincode.png, pls input code
+    else
+    directly print body in terminal.
+    all that will save new cookie in App.root/{weibo_email_address}.dat
+    
+    last you must copy {weibo_email_address}.dat content to App.root/cookie.txt
+    
+    Okay, the new cookie has updated.
+    
 #### Start Node
 
     node app
