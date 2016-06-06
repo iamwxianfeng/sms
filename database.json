@@ -2,7 +2,7 @@
 	"development": {
 		"driver": "mysql",
 		"user": "root",
-		"password": "root",
+		"password": "",
 		"host": "localhost",
 		"database": "sms_development"
 	},
