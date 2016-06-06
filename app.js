@@ -1,30 +1,28 @@
-
 /**
  * Module dependencies.
  */
+var express = require('express');
+var routes = require('./routes');
+var user = require('./routes/user');
+var http = require('http');
+var path = require('path');
 
- var express = require('express');
- var routes = require('./routes');
- var user = require('./routes/user');
- var http = require('http');
- var path = require('path');
+var request = require('request');
+var mysql = require('mysql');
+var urlencode = require('urlencode');
+var sina = require('sinalogin');
+var _ = require("underscore");
+var fs = require('fs');
+var Cookie = require('cookie-jar');
+var config = require('./config/config');
 
- var request = require('request');
- var mysql = require('mysql');
- var urlencode = require('urlencode');
- var sina = require('sinalogin');
- var _ = require("underscore");
- var fs = require('fs');
- var Cookie = require('cookie-jar');
- var config = require('./config/config');
+var ripple = require('ripple-lib');
+var sjcl   = require('sjcl');
+require('./module_extensions/sjcl_sha512');
+var BigInteger = require('jsbn');
+require('./module_extensions/jsbn_jacobi');
 
- var ripple = require('ripple-lib');
- var sjcl   = require('sjcl');
- require('./module_extensions/sjcl_sha512');
- var BigInteger = require('jsbn');
- require('./module_extensions/jsbn_jacobi');
-
- var app = express();
+var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
